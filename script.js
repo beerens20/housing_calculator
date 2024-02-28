@@ -49,6 +49,5 @@ function createIcon(classes){
     return icon;
 };
 
-console.log('something');
 // create event listener
 itemForm.addEventListener('submit', addItem);
