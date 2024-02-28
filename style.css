@@ -1,0 +1,48 @@
+body {
+    background-color: black;
+}
+
+.container {
+    width: 90%;
+    max-width:680px;
+}
+
+.input-container {
+    display: flex;
+    flex-direction: column;
+  }
+
+legend {
+    color: white;
+    font-weight: bold;
+}
+
+label {
+    color: white;
+}
+
+input::-webkit-out-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    -moz-appearance: textfield;;
+}
+
+#expense-list li {
+    color: white;
+    list-style-type: none;
+}
+
+li i {
+    background-color: black;
+    color: white;
+}
+
+li button {
+    background-color: black;
+    border: none;
+    background: none;
+}
