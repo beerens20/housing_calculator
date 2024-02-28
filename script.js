@@ -9,6 +9,8 @@ const expenseAmount = document.getElementById('expense-amount');
 const itemForm = document.getElementById('item-form');
 // monthly income input
 const incomeInput = document.getElementById('income-input')
+// clear button
+const clearBtn = document.getElementById('clear');
 
 // Add an expense to the monthly expense list
 function addItem(e){
@@ -49,5 +51,20 @@ function createIcon(classes){
     return icon;
 };
 
+function removeItem(e){
+    if (e.target.parentElement.classList.contains('remove-item')){
+        e.target.parentElement.parentElement.remove();
+    }
+};
+
+function clearItems(){
+    while (expenseList.firstChild){
+        expenseList.removeChild(expenseList.firstChild);
+        incomeInput.value = '';
+    }
+};
+
 // create event listener
 itemForm.addEventListener('submit', addItem);
+expenseList.addEventListener('click', removeItem);
+clearBtn.addEventListener('click', clearItems);
