@@ -30,6 +30,7 @@ function addItem(e){
 
     // Add item to the UL expenseList
     expenseList.appendChild(li);
+    resetUI();
     expenseName.value = '';
     expenseAmount.value = '';
 }
@@ -53,7 +54,10 @@ function createIcon(classes){
 
 function removeItem(e){
     if (e.target.parentElement.classList.contains('remove-item')){
-        e.target.parentElement.parentElement.remove();
+        if (confirm("Are you sure?")){
+            e.target.parentElement.parentElement.remove();
+            resetUI();
+        }
     }
 };
 
@@ -61,6 +65,16 @@ function clearItems(){
     while (expenseList.firstChild){
         expenseList.removeChild(expenseList.firstChild);
         incomeInput.value = '';
+    };
+    resetUI();
+};
+
+function resetUI(){
+    const items = expenseList.querySelectorAll('li');
+    if (items.length === 0){
+        clearBtn.style.display = 'none';
+    } else {
+        clearBtn.style.display = 'block';
     }
 };
 
@@ -68,3 +82,4 @@ function clearItems(){
 itemForm.addEventListener('submit', addItem);
 expenseList.addEventListener('click', removeItem);
 clearBtn.addEventListener('click', clearItems);
+resetUI();
