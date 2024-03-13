@@ -27,13 +27,24 @@ function addItem(e){
     // Add delete button then text to new li
     li.appendChild(button);
     li.appendChild(document.createTextNode(`${newExpenseName}: ${newExpenseAmount}`));
+    let newExpenseObject = {
+        "expenseName": newExpenseName,
+        "expenseAmount": newExpenseAmount
+    };
 
-    // Add item to the UL expenseList
+    addItemToList(li);
+    addItemToStorage(newExpenseObject);
+
+}
+
+// Add new item to the unordered expenseList
+function addItemToList(li){
     expenseList.appendChild(li);
     resetUI();
     expenseName.value = '';
     expenseAmount.value = '';
 }
+
 
 // Create in-line delete button
 function createButton(classes){
@@ -68,6 +79,19 @@ function clearItems(){
     };
     resetUI();
 };
+
+function addItemToStorage(item){
+    let itemsFromStorage;
+
+    //Check to see if there are already items in localStorage
+    if (localStorage.getItem('items')=== null){
+        itemsFromStorage = [];
+    } else {
+        itemsFromStorage = JSON.parse(localStorage.getItem('items'));
+    };
+    itemsFromStorage.push(item);
+    localStorage.setItem('items', JSON.stringify(itemsFromStorage));
+}
 
 function resetUI(){
     const items = expenseList.querySelectorAll('li');
