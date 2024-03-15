@@ -12,39 +12,56 @@ const incomeInput = document.getElementById('income-input')
 // clear button
 const clearBtn = document.getElementById('clear');
 
+function displayItems(){
+    const itemsFromStorage = getItemsFromStorage();
+    itemsFromStorage.forEach((item) => addItemToDOM(item));
+};
+
 // Add an expense to the monthly expense list
-function addItem(e){
+function onAddItemSubmit(e){
     e.preventDefault();
     
     // Grab the input values for expense name and amount
     const newExpenseName = expenseName.value;
     const newExpenseAmount = expenseAmount.value;
 
+    let newExpenseObject = {
+        "expenseName": newExpenseName,
+        "expenseAmount": newExpenseAmount
+    }
+
+    // Create item DOM element
+    addItemToDOM(newExpenseObject);
+
+    // Add item to local storage
+    addItemToStorage(newExpenseObject);
+
+    document.getElementById('expense-name').value='';
+    document.getElementById('expense-amount').value='';
+};
+
+// Add new item to the unordered expenseList
+function addItemToDOM(item){
     // Create new list item with new expense values
     const li = document.createElement('li');
     // Add delete icon button
     const button = createButton('remove-item btn-link text-red');
     // Add delete button then text to new li
     li.appendChild(button);
-    li.appendChild(document.createTextNode(`${newExpenseName}: ${newExpenseAmount}`));
-    let newExpenseObject = {
-        "expenseName": newExpenseName,
-        "expenseAmount": newExpenseAmount
-    };
+    let expenseName = item['expenseName'];
+    let expenseAmount = item['expenseAmount'];
+    li.appendChild(document.createTextNode(`${expenseName}: ${expenseAmount}`));
 
-    addItemToList(li);
-    addItemToStorage(newExpenseObject);
-
-}
-
-// Add new item to the unordered expenseList
-function addItemToList(li){
     expenseList.appendChild(li);
     resetUI();
-    expenseName.value = '';
-    expenseAmount.value = '';
-}
+};
 
+function addItemToStorage(item){
+    const itemsFromStorage = getItemsFromStorage();
+
+    itemsFromStorage.push(item);
+    localStorage.setItem('items', JSON.stringify(itemsFromStorage));
+};
 
 // Create in-line delete button
 function createButton(classes){
@@ -52,7 +69,6 @@ function createButton(classes){
     button.className = classes;
     const icon = createIcon('fa-solid fa-xmark');
     button.appendChild(icon);
-    console.log(typeof button);
     return button;
 };
 
@@ -61,6 +77,17 @@ function createIcon(classes){
     const icon = document.createElement('i');
     icon.className = classes;
     return icon;
+};
+
+function getItemsFromStorage(){
+    let itemsFromStorage;
+    //Check to see if there are already items in localStorage
+    if (localStorage.getItem('items') === null){
+        itemsFromStorage = [];
+    } else {
+        itemsFromStorage = JSON.parse(localStorage.getItem('items'));
+    }
+    return itemsFromStorage;
 };
 
 function removeItem(e){
@@ -80,19 +107,6 @@ function clearItems(){
     resetUI();
 };
 
-function addItemToStorage(item){
-    let itemsFromStorage;
-
-    //Check to see if there are already items in localStorage
-    if (localStorage.getItem('items')=== null){
-        itemsFromStorage = [];
-    } else {
-        itemsFromStorage = JSON.parse(localStorage.getItem('items'));
-    };
-    itemsFromStorage.push(item);
-    localStorage.setItem('items', JSON.stringify(itemsFromStorage));
-}
-
 function resetUI(){
     const items = expenseList.querySelectorAll('li');
     if (items.length === 0){
@@ -103,7 +117,8 @@ function resetUI(){
 };
 
 // create event listener
-itemForm.addEventListener('submit', addItem);
+itemForm.addEventListener('submit', onAddItemSubmit);
 expenseList.addEventListener('click', removeItem);
 clearBtn.addEventListener('click', clearItems);
 resetUI();
+document.addEventListener('DOMContentLoaded', displayItems);
