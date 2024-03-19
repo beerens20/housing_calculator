@@ -87,16 +87,37 @@ function getItemsFromStorage(){
     } else {
         itemsFromStorage = JSON.parse(localStorage.getItem('items'));
     }
+    // console.log(itemsFromStorage);
     return itemsFromStorage;
+
 };
 
-function removeItem(e){
-    if (e.target.parentElement.classList.contains('remove-item')){
-        if (confirm("Are you sure?")){
-            e.target.parentElement.parentElement.remove();
-            resetUI();
+// Create function to handle onClick actions
+function onClickItem(e){
+    if (e.target.parentElement.classList.contains('remove-item')){  // Check if target element contains the class of .remove-item
+        removeItem(e.target.parentElement.parentElement);           // Call the removeItem function passing in the grandparent of the target (the LI)
+    }
+};
+
+function removeItem(item){
+    if (confirm("Are you sure?")){                  // Confirm before remove
+        item.remove();                              // remove the target LI (item) from the DOM
+        // removeItemfromStorage(item.textContent);    // Call function to remove item from localStorage
+        removeItemfromStorage(item);
+        resetUI();                                  // Check if list is empty, hide buttons etc if true
+    }
+};
+
+function removeItemfromStorage(item){
+    let list = JSON.parse(localStorage.getItem('items'));                     // Get current items in local storage and set to variable
+    let expense = item.textContent.split(':')[0];
+    let itemsFromStorage = [];
+    for (let i = 0; i < list.length; i++){
+        if (list[i].expenseName !== expense){
+            itemsFromStorage = [...itemsFromStorage, list[i]];
         }
     }
+    localStorage.setItem('items', JSON.stringify(itemsFromStorage));
 };
 
 function clearItems(){
@@ -104,6 +125,7 @@ function clearItems(){
         expenseList.removeChild(expenseList.firstChild);
         incomeInput.value = '';
     };
+    localStorage.removeItem('items');
     resetUI();
 };
 
@@ -118,7 +140,7 @@ function resetUI(){
 
 // create event listener
 itemForm.addEventListener('submit', onAddItemSubmit);
-expenseList.addEventListener('click', removeItem);
+expenseList.addEventListener('click', onClickItem);
 clearBtn.addEventListener('click', clearItems);
 resetUI();
 document.addEventListener('DOMContentLoaded', displayItems);
